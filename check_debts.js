@@ -16,6 +16,11 @@ const DEBTS = [
     name: "Test3",
     monthlyPayment: 5845,
     dueDate: "2026-06-06"
+  },
+  {
+    name: "Testo",
+    monthlyPayment: 15000,
+    dueDate: "2026-06-07"
   }
 ];
 
