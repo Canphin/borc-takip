@@ -20,4 +20,7 @@ jobs:
           node-version: '20'
       
       - name: Borçları kontrol et ve bildirim gönder
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: node check_debts.js
