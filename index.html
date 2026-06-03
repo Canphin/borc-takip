@@ -34,7 +34,7 @@
         }
         
         .header h1 {
-            font-size: 2em;
+            font-size: 1.8em;
             margin-bottom: 10px;
         }
         
@@ -54,29 +54,29 @@
         
         .card h2 {
             margin-bottom: 15px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #4fc3f7;
         }
         
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         
         label {
             display: block;
             margin-bottom: 5px;
             color: #aaa;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
         
         input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 10px;
             color: #fff;
-            font-size: 1em;
+            font-size: 0.95em;
         }
         
         input:focus {
@@ -85,10 +85,10 @@
         }
         
         .btn {
-            padding: 12px 24px;
+            padding: 12px 20px;
             border: none;
             border-radius: 10px;
-            font-size: 1em;
+            font-size: 0.9em;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
@@ -108,17 +108,8 @@
         
         .btn-danger {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            padding: 8px 16px;
-            font-size: 0.8em;
-        }
-        
-        .btn-test {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            margin-right: 10px;
-        }
-        
-        .btn-telegram {
-            background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
+            padding: 6px 12px;
+            font-size: 0.75em;
         }
         
         .btn:hover {
@@ -126,15 +117,11 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
         
-        .debt-list {
-            list-style: none;
-        }
-        
         .debt-item {
             background: rgba(255,255,255,0.03);
-            padding: 15px;
+            padding: 12px 15px;
             border-radius: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border-left: 4px solid #4fc3f7;
         }
         
@@ -157,24 +144,25 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
         
         .debt-name {
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 1em;
         }
         
         .debt-details {
             color: #aaa;
-            font-size: 0.9em;
+            font-size: 0.8em;
         }
         
         .countdown {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8em;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
             font-weight: bold;
+            white-space: nowrap;
         }
         
         .countdown.urgent {
@@ -193,57 +181,50 @@
         }
         
         .notification-log {
-            margin-top: 15px;
-            max-height: 200px;
+            margin-top: 10px;
+            max-height: 180px;
             overflow-y: auto;
         }
         
         .log-item {
-            padding: 8px;
+            padding: 6px 10px;
             background: rgba(0,0,0,0.3);
             border-radius: 5px;
-            margin-bottom: 5px;
-            font-size: 0.8em;
+            margin-bottom: 4px;
+            font-size: 0.75em;
             color: #aaa;
-        }
-        
-        .test-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
         }
         
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .stat-card {
             background: rgba(255,255,255,0.05);
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.1);
         }
         
         .stat-value {
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #4fc3f7;
         }
         
         .stat-label {
-            font-size: 0.8em;
+            font-size: 0.7em;
             color: #aaa;
-            margin-top: 5px;
+            margin-top: 3px;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 15px;
             font-size: 0.75em;
             font-weight: bold;
@@ -258,14 +239,27 @@
             background: #ffa726;
             color: #000;
         }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4fc3f7;
+            color: #4fc3f7;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <span class="emoji">💰</span>
-            <h1>Taksit & Borç Takip</h1>
-            <p style="color: #aaa;">Telegram Bildirimli Asistan</p>
+            <h1>Borç Takip Asistanı</h1>
+            <p style="color: #aaa; font-size: 0.85em;">Telegram Bildirimli • Tek Mesaj Özet</p>
         </div>
 
         <!-- İstatistikler -->
@@ -280,61 +274,64 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="todayPayments">0</div>
-                <div class="stat-label">Bugünkü Ödemeler</div>
+                <div class="stat-label">7 Gün İçinde</div>
             </div>
         </div>
 
         <!-- Borç Ekleme Formu -->
         <div class="card">
-            <h2>📝 Yeni Borç Ekle</h2>
+            <h2>📝 Borç Ekle / Düzenle</h2>
             <div class="form-group">
                 <label>Borç Adı</label>
-                <input type="text" id="debtName" placeholder="Örn: Araba Kredisi, Kredi Kartı...">
+                <input type="text" id="debtName" placeholder="Örn: Kira, Kredi Kartı...">
             </div>
             <div class="form-group">
-                <label>Toplam Tutar (TL)</label>
-                <input type="number" id="debtAmount" placeholder="10000">
-            </div>
-            <div class="form-group">
-                <label>Taksit Sayısı</label>
-                <input type="number" id="installments" placeholder="12">
-            </div>
-            <div class="form-group">
-                <label>Aylık Faiz Oranı (%)</label>
-                <input type="number" id="interestRate" placeholder="1.5" step="0.1" value="0">
+                <label>Aylık Ödeme (TL)</label>
+                <input type="number" id="monthlyPayment" placeholder="3000">
             </div>
             <div class="form-group">
                 <label>Son Ödeme Günü</label>
                 <input type="date" id="dueDate">
             </div>
-            <button class="btn btn-primary" onclick="addDebt()">➕ Borç Ekle</button>
-            <button class="btn btn-save" onclick="saveToGitHub()">💾 GitHub'a Kaydet (Bildirimler için)</button>
+            <button class="btn btn-primary" onclick="addDebt()">➕ Listeye Ekle</button>
+            <button class="btn btn-save" onclick="saveToGitHub()">💾 GitHub'a Kaydet ve Bildirimleri Güncelle</button>
             
             <div style="margin-top: 10px; text-align: center;">
-                <span id="saveStatus" class="status-badge unsaved">⚠️ Kaydedilmemiş</span>
+                <span id="saveStatus" class="status-badge unsaved">⚠️ Kaydedilmedi</span>
             </div>
         </div>
 
         <!-- Borç Listesi -->
         <div class="card">
-            <h2>📋 Borç Listem</h2>
+            <h2>📋 Borç Listem <span style="font-size:0.7em;color:#aaa;" id="debtCount">(0)</span></h2>
             <div id="debtList"></div>
-            <div id="emptyMessage" style="text-align: center; color: #aaa; padding: 20px;">
+            <div id="emptyMessage" style="text-align: center; color: #aaa; padding: 20px; font-size: 0.9em;">
                 Henüz borç eklenmedi
+            </div>
+            <div class="btn-row" style="margin-top: 15px;">
+                <button class="btn btn-outline" onclick="addTestDebts()">🧪 Test Borçları Ekle</button>
+                <button class="btn btn-danger" onclick="clearAll()" style="padding:12px;">🗑️ Tümünü Sil</button>
             </div>
         </div>
 
-        <!-- Bildirim Günlüğü -->
+        <!-- Önizleme -->
+        <div class="card">
+            <h2>📱 Telegram Önizleme</h2>
+            <div id="preview" style="background: #1a1a2e; padding: 15px; border-radius: 10px; font-size: 0.8em; line-height: 1.6; color: #ccc; white-space: pre-wrap; font-family: monospace;">
+                Borç ekledikten sonra burada Telegram'da görünecek mesajın önizlemesini görebilirsin.
+            </div>
+        </div>
+
+        <!-- İşlem Günlüğü -->
         <div class="card">
             <h2>📜 İşlem Günlüğü</h2>
             <div class="notification-log" id="notificationLog">
-                <div class="log-item">Sistem hazır. Borç ekleyip GitHub'a kaydedebilirsiniz.</div>
+                <div class="log-item">✅ Sistem hazır. Borç ekleyip GitHub'a kaydedebilirsin.</div>
             </div>
         </div>
     </div>
 
     <script>
-        // GitHub API yapılandırması
         const GITHUB_CONFIG = {
             owner: 'Canphin',
             repo: 'borc-takip',
@@ -342,24 +339,62 @@
             branch: 'main'
         };
 
-        // GitHub Token (sayfa yüklendiğinde sorulacak)
         let githubToken = localStorage.getItem('github_token') || '';
 
-        // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', function() {
             if (!githubToken) {
-                const token = prompt('GitHub Personal Access Token\'ını gir (bir kereye mahsus):');
+                const token = prompt('GitHub Personal Access Token\'ını gir (bir kereye mahsus):\n\n(Secrets\'a eklediğin GH_TOKEN değil, senin kişisel token\'ın)');
                 if (token) {
                     githubToken = token;
                     localStorage.setItem('github_token', token);
-                    addLog('✅ GitHub token kaydedildi');
+                    addLog('✅ Token kaydedildi');
                 }
             }
             loadDebts();
             updateStats();
+            updatePreview();
         });
 
-        // GitHub'a kaydet
+        // Telegram mesajının önizlemesini oluştur
+        function generatePreviewText(debts) {
+            if (debts.length === 0) return 'Borç ekledikten sonra burada Telegram\'da görünecek mesajın önizlemesini görebilirsin.';
+            
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            const list = [];
+            for (const d of debts) {
+                const due = new Date(d.dueDate);
+                due.setHours(0,0,0,0);
+                const days = Math.ceil((due - today) / (1000*60*60*24));
+                if (days <= 7) list.push({...d, days});
+            }
+            
+            if (list.length === 0) return '📊 BORÇ ÖZETİ\n📅 ' + today.toLocaleDateString('tr-TR') + '\n━━━━━━━━━━━━━━━\n\n✅ Yaklaşan ödeme yok.';
+            
+            list.sort((a,b) => a.days - b.days);
+            
+            function emoji(d) { if(d<0)return'❌'; if(d===0)return'💰'; if(d===1)return'🔴'; if(d===2)return'🟠'; if(d===3)return'🔶'; if(d<=5)return'🟡'; return'⚠️'; }
+            function text(d) { if(d<0)return Math.abs(d)+' gün GECİKTİ!'; if(d===0)return'BUGÜN!'; if(d===1)return'YARIN!'; return d+' gün kaldı'; }
+            
+            let msg = '📊 BORÇ ÖZETİ\n📅 ' + today.toLocaleDateString('tr-TR') + '\n━━━━━━━━━━━━━━━\n\n';
+            let total = 0;
+            
+            for (const d of list) {
+                msg += emoji(d.days) + ' ' + d.name + '\n   💵 ' + d.monthlyPayment.toLocaleString('tr-TR') + ' TL | ' + text(d.days) + '\n\n';
+                total += d.monthlyPayment;
+            }
+            
+            msg += '━━━━━━━━━━━━━━━\n💰 Toplam: ' + total.toLocaleString('tr-TR') + ' TL\n📋 ' + list.length + ' adet ödeme';
+            return msg;
+        }
+
+        function updatePreview() {
+            const debts = getDebts();
+            document.getElementById('preview').textContent = generatePreviewText(debts);
+        }
+
+        // GitHub'a kaydet (yeni formatta)
         async function saveToGitHub() {
             if (!githubToken) {
                 alert('❌ GitHub token bulunamadı! Sayfayı yenileyip token\'ı gir.');
@@ -375,11 +410,10 @@
 
             addLog('📤 GitHub\'a kaydediliyor...');
 
-            // check_debts.js içeriğini oluştur
             const jsContent = generateJSContent(debts);
 
             try {
-                // Önce mevcut dosyanın SHA'sını al
+                // Mevcut dosyanın SHA'sını al
                 const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
                 
                 let sha = '';
@@ -392,22 +426,18 @@
                     });
                     const getData = await getResponse.json();
                     sha = getData.sha || '';
-                } catch (e) {
-                    // Dosya yoksa sha boş kalır
-                }
+                } catch (e) {}
 
                 // Dosyayı güncelle
                 const updateUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
                 
                 const body = {
-                    message: '🔄 Borç listesi güncellendi',
+                    message: '🔄 Borç listesi güncellendi (' + debts.length + ' borç)',
                     content: btoa(unescape(encodeURIComponent(jsContent))),
                     branch: GITHUB_CONFIG.branch
                 };
                 
-                if (sha) {
-                    body.sha = sha;
-                }
+                if (sha) body.sha = sha;
 
                 const response = await fetch(updateUrl, {
                     method: 'PUT',
@@ -422,12 +452,12 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    addLog('✅ GitHub başarıyla güncellendi!');
+                    addLog('✅ GitHub başarıyla güncellendi! ' + debts.length + ' borç kaydedildi.');
                     document.getElementById('saveStatus').className = 'status-badge saved';
-                    document.getElementById('saveStatus').textContent = '✅ Kaydedildi';
-                    alert('✅ Başarılı!\n\nBorçlar GitHub\'a kaydedildi.\nGitHub Actions bir sonraki kontrolde yeni borçları algılayıp bildirim gönderecek.');
+                    document.getElementById('saveStatus').textContent = '✅ Kaydedildi (' + debts.length + ' borç)';
+                    alert('✅ Başarılı!\n\n' + debts.length + ' borç GitHub\'a kaydedildi.\nBir sonraki kontrolde Telegram\'a tek mesaj olarak gönderilecek.');
                 } else {
-                    addLog('❌ GitHub hatası: ' + (data.message || 'Bilinmeyen hata'));
+                    addLog('❌ GitHub hatası: ' + (data.message || 'Bilinmeyen'));
                     alert('❌ Hata: ' + (data.message || 'Kaydedilemedi'));
                 }
             } catch (error) {
@@ -436,14 +466,10 @@
             }
         }
 
-        // JS dosyası içeriğini oluştur
+        // YENİ JS formatı oluştur (tek mesaj sistemi)
         function generateJSContent(debts) {
             const debtsFormatted = debts.map(d => {
-                return `  {
-    name: "${d.name}",
-    monthlyPayment: ${d.monthlyPayment},
-    dueDate: "${d.dueDate}"
-  }`;
+                return `  { name: "${d.name}", monthlyPayment: ${d.monthlyPayment}, dueDate: "${d.dueDate}" }`;
             }).join(',\n');
 
             return `const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -455,85 +481,62 @@ ${debtsFormatted}
 
 async function sendTelegramMessage(message) {
     const url = \`https://api.telegram.org/bot\${TELEGRAM_TOKEN}/sendMessage\`;
-    
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'HTML'
-            })
+            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
         });
-        
         const data = await response.json();
-        console.log(data.ok ? '✅ Bildirim gönderildi' : '❌ Hata: ' + data.description);
-        return data.ok;
-    } catch (error) {
-        console.log('❌ Bağlantı hatası:', error.message);
-        return false;
-    }
+        if (data.ok) { console.log('✅ Gönderildi'); return true; }
+        else { console.log('❌ Hata: ' + data.description); return false; }
+    } catch (error) { console.log('❌ Bağlantı hatası'); return false; }
 }
+
+function emoji(d) { if(d<0)return'❌'; if(d===0)return'💰'; if(d===1)return'🔴'; if(d===2)return'🟠'; if(d===3)return'🔶'; if(d<=5)return'🟡'; return'⚠️'; }
+function text(d) { if(d<0)return Math.abs(d)+' gün GECİKTİ!'; if(d===0)return'BUGÜN!'; if(d===1)return'YARIN!'; return d+' gün kaldı'; }
 
 async function checkAllDebts() {
     console.log('🔍 Borçlar kontrol ediliyor...');
     console.log('📅 Tarih:', new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }));
+    console.log('📊 Toplam borç sayısı:', DEBTS.length);
     
-    if (DEBTS.length === 0) {
-        console.log('⚠️ Henüz borç eklenmemiş.');
-        return;
-    }
+    if (DEBTS.length === 0) { console.log('⚠️ Borç yok.'); return; }
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    let notificationSent = false;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const notifications = [];
     
     for (const debt of DEBTS) {
-        const dueDate = new Date(debt.dueDate);
-        dueDate.setHours(0, 0, 0, 0);
-        
-        const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
-        
+        const dueDate = new Date(debt.dueDate); dueDate.setHours(0,0,0,0);
+        const daysUntilDue = Math.ceil((dueDate - today) / (1000*60*60*24));
         console.log(\`📋 \${debt.name}: \${daysUntilDue} gün (Vade: \${debt.dueDate})\`);
         
-        let message = '';
-        let shouldNotify = false;
-        
-        if (daysUntilDue === 0) {
-            message = \`💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\n\\n🔴 Hemen ödeme yapmayı unutma!\`;
-            shouldNotify = true;
-        } else if (daysUntilDue === 1) {
-            message = \`🔴 <b>YARIN SON GÜN!</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nSon Ödeme: \${dueDate.toLocaleDateString('tr-TR')}\\n\\n⚠️ Ödemeyi hazırla!\`;
-            shouldNotify = true;
-        } else if (daysUntilDue === 3) {
-            message = \`🔶 <b>3 GÜN KALDI</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nSon Ödeme: \${dueDate.toLocaleDateString('tr-TR')}\\n\\n💡 Hazırlık yapmaya başla!\`;
-            shouldNotify = true;
-        } else if (daysUntilDue === 7) {
-            message = \`⚠️ <b>1 HAFTA KALDI</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nSon Ödeme: \${dueDate.toLocaleDateString('tr-TR')}\\n\\n📅 Bütçeni ayarla.\`;
-            shouldNotify = true;
-        } else if (daysUntilDue < 0) {
-            message = \`❌ <b>GECİKTİN!</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nGecikme: \${Math.abs(daysUntilDue)} gün\\n\\n🚨 Acil ödeme yap!\`;
-            shouldNotify = true;
-        }
-        
-        if (shouldNotify) {
-            console.log(\`📤 Bildirim gönderiliyor: \${debt.name} (\${daysUntilDue} gün)\`);
-            const success = await sendTelegramMessage(message);
-            if (success) {
-                notificationSent = true;
-                console.log('✅ Gönderildi!');
-            } else {
-                console.log('❌ Gönderilemedi!');
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
+        if (daysUntilDue <= 7) {
+            notifications.push({...debt, days: daysUntilDue, date: debt.dueDate});
+            console.log('   ✅ Bildirim listesine eklendi');
+        } else {
+            console.log('   ⏭️ 7 günden fazla, atlandı');
         }
     }
     
-    if (!notificationSent) {
-        console.log('✅ Yaklaşan ödeme yok, bildirim gönderilmedi.');
+    if (notifications.length === 0) { console.log('✅ Yaklaşan ödeme yok.'); return; }
+    
+    notifications.sort((a,b) => a.days - b.days);
+    
+    let message = \`📊 <b>BORÇ ÖZETİ</b>\\n📅 \${today.toLocaleDateString('tr-TR')}\\n━━━━━━━━━━━━━━━\\n\\n\`;
+    let total = 0;
+    
+    for (const n of notifications) {
+        message += \`\${emoji(n.days)} <b>\${n.name}</b>\\n   💵 \${n.monthlyPayment.toLocaleString('tr-TR')} TL | \${text(n.days)}\\n\\n\`;
+        total += n.monthlyPayment;
     }
+    
+    message += \`━━━━━━━━━━━━━━━\\n💰 <b>Toplam: \${total.toLocaleString('tr-TR')} TL</b>\\n📋 \${notifications.length} adet ödeme\`;
+    
+    console.log(\`\\n📤 TEK MESAJ gönderiliyor (\${notifications.length} borç)...\`);
+    const success = await sendTelegramMessage(message);
+    if (success) { console.log(\`✅ Başarılı! \${notifications.length} borç tek mesajda iletildi.\`); }
+    else { console.log('❌ Başarısız!'); }
     
     console.log('✅ Kontrol tamamlandı.');
 }
@@ -543,28 +546,19 @@ checkAllDebts();`;
 
         // Borç ekle
         function addDebt() {
-            const name = document.getElementById('debtName').value;
-            const totalAmount = parseFloat(document.getElementById('debtAmount').value);
-            const installments = parseInt(document.getElementById('installments').value);
-            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const name = document.getElementById('debtName').value.trim();
+            const monthlyPayment = parseFloat(document.getElementById('monthlyPayment').value);
             const dueDate = document.getElementById('dueDate').value;
             
-            if (!name || !totalAmount || !installments || !dueDate) {
+            if (!name || !monthlyPayment || !dueDate) {
                 alert('Lütfen tüm alanları doldurun!');
                 return;
             }
             
-            const monthlyInterest = interestRate / 100;
-            const totalWithInterest = totalAmount * (1 + monthlyInterest * installments);
-            const monthlyPayment = totalWithInterest / installments;
-            
             const debt = {
                 id: Date.now(),
                 name,
-                totalAmount,
-                installments,
-                interestRate,
-                monthlyPayment: Math.round(monthlyPayment * 100) / 100,
+                monthlyPayment,
                 dueDate,
                 createdAt: new Date().toISOString()
             };
@@ -574,33 +568,67 @@ checkAllDebts();`;
             saveDebts(debts);
             
             document.getElementById('debtName').value = '';
-            document.getElementById('debtAmount').value = '';
-            document.getElementById('installments').value = '';
-            document.getElementById('interestRate').value = '0';
+            document.getElementById('monthlyPayment').value = '';
             document.getElementById('dueDate').value = '';
             
             loadDebts();
             updateStats();
-            addLog('✅ Yeni borç eklendi: ' + name);
+            updatePreview();
+            addLog('✅ Eklendi: ' + name + ' (' + monthlyPayment.toLocaleString('tr-TR') + ' TL)');
             document.getElementById('saveStatus').className = 'status-badge unsaved';
             document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi (GitHub\'a kaydet)';
         }
 
-        // Borç sil
-        function deleteDebt(id) {
-            if (confirm('Bu borcu silmek istediğine emin misin?')) {
-                let debts = getDebts();
-                debts = debts.filter(d => d.id !== id);
-                saveDebts(debts);
+        // Test borçları ekle
+        function addTestDebts() {
+            const today = new Date();
+            const testDebts = [
+                { id: Date.now(), name: "Kira", monthlyPayment: 3000, dueDate: new Date(today.getTime() + 1*24*60*60*1000).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+                { id: Date.now()+1, name: "Kredi Kartı", monthlyPayment: 2500, dueDate: new Date(today.getTime() + 2*24*60*60*1000).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+                { id: Date.now()+2, name: "Araba Kredisi", monthlyPayment: 4625, dueDate: new Date(today.getTime() + 3*24*60*60*1000).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+                { id: Date.now()+3, name: "Telefon Taksidi", monthlyPayment: 800, dueDate: new Date(today.getTime() + 5*24*60*60*1000).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+                { id: Date.now()+4, name: "Fatura", monthlyPayment: 450, dueDate: new Date(today.getTime() + 7*24*60*60*1000).toISOString().split('T')[0], createdAt: new Date().toISOString() }
+            ];
+            
+            let debts = getDebts();
+            debts = [...debts, ...testDebts];
+            saveDebts(debts);
+            loadDebts();
+            updateStats();
+            updatePreview();
+            addLog('🧪 5 test borcu eklendi');
+            document.getElementById('saveStatus').className = 'status-badge unsaved';
+            document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi (GitHub\'a kaydet)';
+        }
+
+        // Tümünü sil
+        function clearAll() {
+            if (confirm('TÜM borçları silmek istediğine emin misin?')) {
+                saveDebts([]);
                 loadDebts();
                 updateStats();
-                addLog('🗑️ Borç silindi');
+                updatePreview();
+                addLog('🗑️ Tüm borçlar silindi');
                 document.getElementById('saveStatus').className = 'status-badge unsaved';
-                document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi (GitHub\'a kaydet)';
+                document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi';
             }
         }
 
-        // localStorage işlemleri
+        // Borç sil
+        function deleteDebt(id) {
+            let debts = getDebts();
+            const deleted = debts.find(d => d.id === id);
+            debts = debts.filter(d => d.id !== id);
+            saveDebts(debts);
+            loadDebts();
+            updateStats();
+            updatePreview();
+            addLog('🗑️ Silindi: ' + (deleted ? deleted.name : 'Bilinmeyen'));
+            document.getElementById('saveStatus').className = 'status-badge unsaved';
+            document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi (GitHub\'a kaydet)';
+        }
+
+        // localStorage
         function getDebts() {
             return JSON.parse(localStorage.getItem('debts_data') || '[]');
         }
@@ -609,11 +637,13 @@ checkAllDebts();`;
             localStorage.setItem('debts_data', JSON.stringify(debts));
         }
 
-        // Borç listesini yükle
+        // Listeyi yükle
         function loadDebts() {
             const debts = getDebts();
             const debtList = document.getElementById('debtList');
             const emptyMessage = document.getElementById('emptyMessage');
+            
+            document.getElementById('debtCount').textContent = '(' + debts.length + ')';
             
             if (debts.length === 0) {
                 debtList.innerHTML = '';
@@ -624,12 +654,12 @@ checkAllDebts();`;
             emptyMessage.style.display = 'none';
             
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            today.setHours(0,0,0,0);
             
             debtList.innerHTML = debts.map(debt => {
                 const dueDate = new Date(debt.dueDate);
-                dueDate.setHours(0, 0, 0, 0);
-                const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                dueDate.setHours(0,0,0,0);
+                const daysUntilDue = Math.ceil((dueDate - today) / (1000*60*60*24));
                 
                 let status = 'good';
                 let countdownText = '';
@@ -637,7 +667,7 @@ checkAllDebts();`;
                 
                 if (daysUntilDue < 0) {
                     status = 'urgent';
-                    countdownText = `${Math.abs(daysUntilDue)} gün gecikti!`;
+                    countdownText = Math.abs(daysUntilDue) + ' gün gecikti!';
                     countdownClass = 'urgent';
                 } else if (daysUntilDue === 0) {
                     status = 'urgent';
@@ -645,14 +675,14 @@ checkAllDebts();`;
                     countdownClass = 'urgent';
                 } else if (daysUntilDue <= 3) {
                     status = 'warning';
-                    countdownText = `${daysUntilDue} gün kaldı`;
+                    countdownText = daysUntilDue + ' gün kaldı';
                     countdownClass = 'warning';
                 } else if (daysUntilDue <= 7) {
                     status = 'warning';
-                    countdownText = `${daysUntilDue} gün kaldı`;
+                    countdownText = daysUntilDue + ' gün kaldı';
                     countdownClass = 'warning';
                 } else {
-                    countdownText = `${daysUntilDue} gün var`;
+                    countdownText = daysUntilDue + ' gün var';
                     countdownClass = 'good';
                 }
                 
@@ -661,13 +691,9 @@ checkAllDebts();`;
                         <div class="debt-info">
                             <div>
                                 <div class="debt-name">${debt.name}</div>
-                                <div class="debt-details">
-                                    Aylık: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL | 
-                                    Toplam: ${debt.totalAmount.toLocaleString('tr-TR')} TL | 
-                                    Taksit: ${debt.installments}
-                                </div>
+                                <div class="debt-details">Aylık: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL | Vade: ${new Date(debt.dueDate).toLocaleDateString('tr-TR')}</div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
                                 <span class="countdown ${countdownClass}">${countdownText}</span>
                                 <button class="btn btn-danger" onclick="deleteDebt(${debt.id})">🗑️</button>
                             </div>
@@ -677,33 +703,34 @@ checkAllDebts();`;
             }).join('');
         }
 
-        // İstatistikleri güncelle
+        // İstatistikler
         function updateStats() {
             const debts = getDebts();
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            today.setHours(0,0,0,0);
             
-            const totalDebt = debts.reduce((sum, d) => sum + d.totalAmount, 0);
+            const totalDebt = debts.reduce((sum, d) => sum + d.monthlyPayment, 0);
             const activeDebts = debts.length;
             
-            const todayPayments = debts.filter(d => {
+            const within7Days = debts.filter(d => {
                 const dueDate = new Date(d.dueDate);
-                dueDate.setHours(0, 0, 0, 0);
-                return dueDate.getTime() === today.getTime();
+                dueDate.setHours(0,0,0,0);
+                const days = Math.ceil((dueDate - today) / (1000*60*60*24));
+                return days <= 7;
             }).length;
             
             document.getElementById('totalDebt').textContent = totalDebt.toLocaleString('tr-TR') + ' ₺';
             document.getElementById('activeDebts').textContent = activeDebts;
-            document.getElementById('todayPayments').textContent = todayPayments;
+            document.getElementById('todayPayments').textContent = within7Days;
         }
 
-        // Log ekle
+        // Log
         function addLog(message) {
             const logContainer = document.getElementById('notificationLog');
             const time = new Date().toLocaleTimeString('tr-TR');
             const logItem = document.createElement('div');
             logItem.className = 'log-item';
-            logItem.textContent = `[${time}] ${message}`;
+            logItem.textContent = '[' + time + '] ' + message;
             logContainer.insertBefore(logItem, logContainer.firstChild);
             
             if (logContainer.children.length > 50) {
