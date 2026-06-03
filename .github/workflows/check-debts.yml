@@ -1,0 +1,23 @@
+name: Günlük Borç Kontrolü
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-debts:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Depoyu kontrol et
+        uses: actions/checkout@v4
+      
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Borçları kontrol et ve bildirim gönder
+        run: node check_debts.js
