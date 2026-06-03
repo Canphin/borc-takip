@@ -2,9 +2,12 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 const DEBTS = [
-  { name: "Fatura", monthlyPayment: 1000, dueDate: "2026-06-06" },
-  { name: "Taksi", monthlyPayment: 15000, dueDate: "2026-06-05" },
-  { name: "Uçak", monthlyPayment: 100000, dueDate: "2026-06-09" }
+  { name: "Deneme1", monthlyPayment: 4000, dueDate: "2026-06-05" },
+  { name: "Deneme2", monthlyPayment: 5000, dueDate: "2026-06-06" },
+  { name: "Deneme3", monthlyPayment: 6000, dueDate: "2026-06-05" },
+  { name: "Deneme4", monthlyPayment: 9000, dueDate: "2026-06-08" },
+  { name: "Deneme5", monthlyPayment: 5000, dueDate: "2026-06-09" },
+  { name: "Deneme6", monthlyPayment: 5000, dueDate: "2026-06-09" }
 ];
 
 async function sendTelegramMessage(message) {
