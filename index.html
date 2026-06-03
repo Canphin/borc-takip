@@ -92,30 +92,33 @@
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
+            color: white;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             width: 100%;
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            padding: 8px 16px;
+            font-size: 0.8em;
         }
         
         .btn-test {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
             margin-right: 10px;
         }
         
         .btn-telegram {
             background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
-            color: white;
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            color: white;
-            padding: 8px 16px;
-            font-size: 0.8em;
         }
         
         .btn:hover {
@@ -237,6 +240,24 @@
             color: #aaa;
             margin-top: 5px;
         }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+        
+        .status-badge.saved {
+            background: #11998e;
+            color: white;
+        }
+        
+        .status-badge.unsaved {
+            background: #ffa726;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -287,12 +308,10 @@
                 <input type="date" id="dueDate">
             </div>
             <button class="btn btn-primary" onclick="addDebt()">➕ Borç Ekle</button>
+            <button class="btn btn-save" onclick="saveToGitHub()">💾 GitHub'a Kaydet (Bildirimler için)</button>
             
-            <div class="test-buttons">
-                <button class="btn btn-test" onclick="testNotifications()">🧪 Tüm Testleri Çalıştır</button>
-                <button class="btn btn-telegram" onclick="testTelegramConnection()">📱 Telegram Bağlantı Testi</button>
-                <button class="btn btn-test" onclick="addTestDebts()">📝 Test Borçları Ekle</button>
-                <button class="btn btn-danger" onclick="clearAllDebts()">🗑️ Tümünü Sil</button>
+            <div style="margin-top: 10px; text-align: center;">
+                <span id="saveStatus" class="status-badge unsaved">⚠️ Kaydedilmemiş</span>
             </div>
         </div>
 
@@ -307,196 +326,219 @@
 
         <!-- Bildirim Günlüğü -->
         <div class="card">
-            <h2>📜 Bildirim Günlüğü</h2>
+            <h2>📜 İşlem Günlüğü</h2>
             <div class="notification-log" id="notificationLog">
-                <div class="log-item">Sistem hazır. Borç ekleyip test edebilirsiniz.</div>
+                <div class="log-item">Sistem hazır. Borç ekleyip GitHub'a kaydedebilirsiniz.</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Telegram Bot Yapılandırması
-        const TELEGRAM_CONFIG = {
-            botToken: '8498099085:AAEpI-uWC3RH6s_9IiY2_MyJVcImHhi_0FA',
-            chatId: '6931158642'
+        // GitHub API yapılandırması
+        const GITHUB_CONFIG = {
+            owner: 'Canphin',
+            repo: 'borc-takip',
+            path: 'check_debts.js',
+            branch: 'main'
         };
 
-        // localStorage anahtarları
-        const STORAGE_KEYS = {
-            debts: 'debts_data',
-            notifications: 'notification_log',
-            lastNotificationDates: 'last_notification_dates'
-        };
+        // GitHub Token (sayfa yüklendiğinde sorulacak)
+        let githubToken = localStorage.getItem('github_token') || '';
 
         // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', function() {
+            if (!githubToken) {
+                const token = prompt('GitHub Personal Access Token\'ını gir (bir kereye mahsus):');
+                if (token) {
+                    githubToken = token;
+                    localStorage.setItem('github_token', token);
+                    addLog('✅ GitHub token kaydedildi');
+                }
+            }
             loadDebts();
-            checkAllNotifications();
             updateStats();
-            
-            // Her 5 dakikada bir otomatik kontrol
-            setInterval(checkAllNotifications, 300000);
         });
 
-        // Telegram'a mesaj gönder
-        async function sendTelegramMessage(message) {
-            const url = `https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendMessage`;
+        // GitHub'a kaydet
+        async function saveToGitHub() {
+            if (!githubToken) {
+                alert('❌ GitHub token bulunamadı! Sayfayı yenileyip token\'ı gir.');
+                return;
+            }
+
+            const debts = getDebts();
             
+            if (debts.length === 0) {
+                alert('⚠️ Kaydedilecek borç yok! Önce borç ekleyin.');
+                return;
+            }
+
+            addLog('📤 GitHub\'a kaydediliyor...');
+
+            // check_debts.js içeriğini oluştur
+            const jsContent = generateJSContent(debts);
+
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
+                // Önce mevcut dosyanın SHA'sını al
+                const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+                
+                let sha = '';
+                try {
+                    const getResponse = await fetch(getUrl, {
+                        headers: {
+                            'Authorization': `token ${githubToken}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    const getData = await getResponse.json();
+                    sha = getData.sha || '';
+                } catch (e) {
+                    // Dosya yoksa sha boş kalır
+                }
+
+                // Dosyayı güncelle
+                const updateUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+                
+                const body = {
+                    message: '🔄 Borç listesi güncellendi',
+                    content: btoa(unescape(encodeURIComponent(jsContent))),
+                    branch: GITHUB_CONFIG.branch
+                };
+                
+                if (sha) {
+                    body.sha = sha;
+                }
+
+                const response = await fetch(updateUrl, {
+                    method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CONFIG.chatId,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
+                    body: JSON.stringify(body)
                 });
-                
+
                 const data = await response.json();
-                
-                if (data.ok) {
-                    addLog('✅ Telegram bildirimi gönderildi: ' + message.substring(0, 50) + '...');
-                    return true;
+
+                if (response.ok) {
+                    addLog('✅ GitHub başarıyla güncellendi!');
+                    document.getElementById('saveStatus').className = 'status-badge saved';
+                    document.getElementById('saveStatus').textContent = '✅ Kaydedildi';
+                    alert('✅ Başarılı!\n\nBorçlar GitHub\'a kaydedildi.\nGitHub Actions bir sonraki kontrolde yeni borçları algılayıp bildirim gönderecek.');
                 } else {
-                    addLog('❌ Telegram hatası: ' + (data.description || 'Bilinmeyen hata'));
-                    return false;
+                    addLog('❌ GitHub hatası: ' + (data.message || 'Bilinmeyen hata'));
+                    alert('❌ Hata: ' + (data.message || 'Kaydedilemedi'));
                 }
             } catch (error) {
                 addLog('❌ Bağlantı hatası: ' + error.message);
-                return false;
+                alert('❌ Bağlantı hatası: ' + error.message);
             }
         }
 
-        // Telegram bağlantı testi
-        async function testTelegramConnection() {
-            addLog('🔍 Telegram bağlantısı test ediliyor...');
-            
-            const success = await sendTelegramMessage(
-                '🧪 <b>Bağlantı Testi</b>\n\n' +
-                '✅ Eğer bu mesajı gördüysen, Telegram botun başarıyla çalışıyor!\n' +
-                '📱 Taksit Takip Asistanı hazır.\n' +
-                '🕒 ' + new Date().toLocaleString('tr-TR')
-            );
-            
+        // JS dosyası içeriğini oluştur
+        function generateJSContent(debts) {
+            const debtsFormatted = debts.map(d => {
+                return `  {
+    name: "${d.name}",
+    monthlyPayment: ${d.monthlyPayment},
+    dueDate: "${d.dueDate}"
+  }`;
+            }).join(',\n');
+
+            return `const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+const DEBTS = [
+${debtsFormatted}
+];
+
+async function sendTelegramMessage(message) {
+    const url = \`https://api.telegram.org/bot\${TELEGRAM_TOKEN}/sendMessage\`;
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            })
+        });
+        
+        const data = await response.json();
+        console.log(data.ok ? '✅ Bildirim gönderildi' : '❌ Hata: ' + data.description);
+        return data.ok;
+    } catch (error) {
+        console.log('❌ Bağlantı hatası:', error.message);
+        return false;
+    }
+}
+
+async function checkAllDebts() {
+    console.log('🔍 Borçlar kontrol ediliyor...');
+    console.log('📅 Tarih:', new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }));
+    
+    if (DEBTS.length === 0) {
+        console.log('⚠️ Henüz borç eklenmemiş.');
+        return;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let notificationSent = false;
+    
+    for (const debt of DEBTS) {
+        const dueDate = new Date(debt.dueDate);
+        dueDate.setHours(0, 0, 0, 0);
+        
+        const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+        
+        console.log(\`📋 \${debt.name}: \${daysUntilDue} gün (Vade: \${debt.dueDate})\`);
+        
+        let message = '';
+        let shouldNotify = false;
+        
+        if (daysUntilDue === 0) {
+            message = \`💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\n\\n🔴 Hemen ödeme yapmayı unutma!\`;
+            shouldNotify = true;
+        } else if (daysUntilDue === 1) {
+            message = \`🔴 <b>YARIN SON GÜN!</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nSon Ödeme: \${dueDate.toLocaleDateString('tr-TR')}\\n\\n⚠️ Ödemeyi hazırla!\`;
+            shouldNotify = true;
+        } else if (daysUntilDue === 3) {
+            message = \`🔶 <b>3 GÜN KALDI</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nSon Ödeme: \${dueDate.toLocaleDateString('tr-TR')}\\n\\n💡 Hazırlık yapmaya başla!\`;
+            shouldNotify = true;
+        } else if (daysUntilDue === 7) {
+            message = \`⚠️ <b>1 HAFTA KALDI</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nSon Ödeme: \${dueDate.toLocaleDateString('tr-TR')}\\n\\n📅 Bütçeni ayarla.\`;
+            shouldNotify = true;
+        } else if (daysUntilDue < 0) {
+            message = \`❌ <b>GECİKTİN!</b>\\n\\nBorç: \${debt.name}\\nTutar: \${debt.monthlyPayment.toLocaleString('tr-TR')} TL\\nGecikme: \${Math.abs(daysUntilDue)} gün\\n\\n🚨 Acil ödeme yap!\`;
+            shouldNotify = true;
+        }
+        
+        if (shouldNotify) {
+            console.log(\`📤 Bildirim gönderiliyor: \${debt.name} (\${daysUntilDue} gün)\`);
+            const success = await sendTelegramMessage(message);
             if (success) {
-                alert('✅ Telegram bağlantısı başarılı!\n\nTelegram\'ı kontrol et, test mesajı gelmiş olmalı.');
+                notificationSent = true;
+                console.log('✅ Gönderildi!');
             } else {
-                alert('❌ Bağlantı başarısız!\n\nLütfen internet bağlantını ve Telegram bot ayarlarını kontrol et.');
+                console.log('❌ Gönderilemedi!');
             }
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
+    }
+    
+    if (!notificationSent) {
+        console.log('✅ Yaklaşan ödeme yok, bildirim gönderilmedi.');
+    }
+    
+    console.log('✅ Kontrol tamamlandı.');
+}
 
-        // Tüm bildirimleri test et
-        async function testNotifications() {
-            addLog('🧪 Kapsamlı test başlatılıyor...');
-            
-            // Test 1: Telegram bağlantısı
-            addLog('📡 Test 1/4: Telegram bağlantısı...');
-            const connectionOk = await sendTelegramMessage(
-                '🧪 <b>TEST BAŞLATILDI</b>\n\nTüm bildirim seviyeleri test ediliyor...'
-            );
-            
-            if (!connectionOk) {
-                alert('❌ Telegram bağlantısı başarısız! Test durduruldu.');
-                return;
-            }
-            
-            // Test 2: Farklı bildirim tipleri
-            setTimeout(async () => {
-                addLog('⚠️ Test 2/4: 7 gün kala bildirimi...');
-                await sendTelegramMessage(
-                    '⚠️ <b>TEST: 7 Gün Kala</b>\n\n' +
-                    'Bu bir test bildirimidir.\n' +
-                    'Borç: Test Kredisi\n' +
-                    'Tutar: 1,000 TL\n' +
-                    'Kalan Gün: 7\n\n' +
-                    '💡 Hazırlık yapmaya başlayabilirsiniz.'
-                );
-                
-                setTimeout(async () => {
-                    addLog('🔶 Test 3/4: 3 gün kala bildirimi...');
-                    await sendTelegramMessage(
-                        '🔶 <b>TEST: 3 Gün Kala</b>\n\n' +
-                        'Bu bir test bildirimidir.\n' +
-                        'Borç: Test Kredisi\n' +
-                        'Tutar: 1,000 TL\n' +
-                        'Kalan Gün: 3\n\n' +
-                        '⚠️ Ödeme günü yaklaşıyor!'
-                    );
-                    
-                    setTimeout(async () => {
-                        addLog('💰 Test 4/4: Bugün bildirimi...');
-                        await sendTelegramMessage(
-                            '💰 <b>TEST: BUGÜN ÖDEME GÜNÜ!</b>\n\n' +
-                            'Bu bir test bildirimidir.\n' +
-                            'Borç: Test Kredisi\n' +
-                            'Tutar: 1,000 TL\n\n' +
-                            '🔴 HEMEN ÖDEME YAPILMALI!'
-                        );
-                        
-                        addLog('✅ Tüm testler tamamlandı! Telegram\'ı kontrol et.');
-                        alert('✅ Tüm testler başarıyla tamamlandı!\n\nTelegram\'da 4 farklı test mesajı görmelisin.\nHepsini kontrol et!');
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }
-
-        // Test borçları ekle
-        function addTestDebts() {
-            const today = new Date();
-            const testDebts = [
-                {
-                    id: Date.now(),
-                    name: '🚗 Test: Araba Kredisi',
-                    totalAmount: 50000,
-                    installments: 12,
-                    interestRate: 1.5,
-                    monthlyPayment: 4625,
-                    dueDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: Date.now() + 1,
-                    name: '💳 Test: Kredi Kartı',
-                    totalAmount: 2500,
-                    installments: 1,
-                    interestRate: 0,
-                    monthlyPayment: 2500,
-                    dueDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: Date.now() + 2,
-                    name: '🏠 Test: Kira',
-                    totalAmount: 3000,
-                    installments: 1,
-                    interestRate: 0,
-                    monthlyPayment: 3000,
-                    dueDate: today.toISOString().split('T')[0],
-                    createdAt: new Date().toISOString()
-                }
-            ];
-            
-            let debts = getDebts();
-            debts = [...debts, ...testDebts];
-            saveDebts(debts);
-            loadDebts();
-            updateStats();
-            checkAllNotifications();
-            
-            addLog('📝 3 adet test borcu eklendi (3 günlük, 7 günlük ve bugünlük)');
-        }
-
-        // Tüm borçları sil
-        function clearAllDebts() {
-            if (confirm('TÜM borçları silmek istediğine emin misin?')) {
-                localStorage.removeItem(STORAGE_KEYS.debts);
-                loadDebts();
-                updateStats();
-                addLog('🗑️ Tüm borçlar silindi');
-            }
+checkAllDebts();`;
         }
 
         // Borç ekle
@@ -512,7 +554,6 @@
                 return;
             }
             
-            // Aylık ödeme hesapla (basit faiz)
             const monthlyInterest = interestRate / 100;
             const totalWithInterest = totalAmount * (1 + monthlyInterest * installments);
             const monthlyPayment = totalWithInterest / installments;
@@ -532,7 +573,6 @@
             debts.push(debt);
             saveDebts(debts);
             
-            // Formu temizle
             document.getElementById('debtName').value = '';
             document.getElementById('debtAmount').value = '';
             document.getElementById('installments').value = '';
@@ -542,9 +582,8 @@
             loadDebts();
             updateStats();
             addLog('✅ Yeni borç eklendi: ' + name);
-            
-            // Hemen bildirim kontrolü yap
-            checkDebtNotification(debt);
+            document.getElementById('saveStatus').className = 'status-badge unsaved';
+            document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi (GitHub\'a kaydet)';
         }
 
         // Borç sil
@@ -556,104 +595,18 @@
                 loadDebts();
                 updateStats();
                 addLog('🗑️ Borç silindi');
+                document.getElementById('saveStatus').className = 'status-badge unsaved';
+                document.getElementById('saveStatus').textContent = '⚠️ Kaydedilmedi (GitHub\'a kaydet)';
             }
         }
 
-        // Bildirim kontrolü
-        async function checkDebtNotification(debt) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const dueDate = new Date(debt.dueDate);
-            dueDate.setHours(0, 0, 0, 0);
-            
-            const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
-            
-            // Daha önce bu borç için bildirim gönderilmiş mi?
-            const lastNotifDates = getLastNotificationDates();
-            const lastNotifKey = debt.id + '_' + daysUntilDue;
-            
-            // Eğer bu gün sayısı için daha önce bildirim gönderildiyse tekrar gönderme
-            if (lastNotifDates[lastNotifKey]) {
-                return;
-            }
-            
-            let message = '';
-            let shouldNotify = false;
-            
-            if (daysUntilDue === 0) {
-                message = '💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\n\n' +
-                         `Borç: ${debt.name}\n` +
-                         `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n\n` +
-                         '🔴 Hemen ödeme yapmayı unutma!';
-                shouldNotify = true;
-            } else if (daysUntilDue === 1) {
-                message = '🔴 <b>YARIN SON GÜN!</b>\n\n' +
-                         `Borç: ${debt.name}\n` +
-                         `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                         `Kalan Süre: 1 GÜN\n\n` +
-                         '⚠️ Ödemeyi hazırla!';
-                shouldNotify = true;
-            } else if (daysUntilDue === 3) {
-                message = '🔶 <b>3 GÜN KALDI</b>\n\n' +
-                         `Borç: ${debt.name}\n` +
-                         `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                         `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
-                         '💡 Hazırlık yapmaya başla!';
-                shouldNotify = true;
-            } else if (daysUntilDue === 7) {
-                message = '⚠️ <b>1 HAFTA KALDI</b>\n\n' +
-                         `Borç: ${debt.name}\n` +
-                         `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                         `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
-                         '📅 Bütçeni ayarla.';
-                shouldNotify = true;
-            } else if (daysUntilDue < 0) {
-                message = '❌ <b>GECİKTİN!</b>\n\n' +
-                         `Borç: ${debt.name}\n` +
-                         `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                         `Gecikme: ${Math.abs(daysUntilDue)} gün\n\n` +
-                         '🚨 Acil ödeme yap!';
-                shouldNotify = true;
-            }
-            
-            if (shouldNotify) {
-                const success = await sendTelegramMessage(message);
-                if (success) {
-                    // Bildirim gönderildi olarak işaretle
-                    lastNotifDates[lastNotifKey] = new Date().toISOString();
-                    saveLastNotificationDates(lastNotifDates);
-                    addLog(`🔔 Bildirim gönderildi: ${debt.name} (${daysUntilDue} gün)`);
-                }
-            }
-        }
-
-        // Tüm bildirimleri kontrol et
-        async function checkAllNotifications() {
-            const debts = getDebts();
-            for (const debt of debts) {
-                await checkDebtNotification(debt);
-            }
-        }
-
-        // Borçları localStorage'dan al
+        // localStorage işlemleri
         function getDebts() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEYS.debts) || '[]');
+            return JSON.parse(localStorage.getItem('debts_data') || '[]');
         }
 
-        // Borçları localStorage'a kaydet
         function saveDebts(debts) {
-            localStorage.setItem(STORAGE_KEYS.debts, JSON.stringify(debts));
-        }
-
-        // Son bildirim tarihlerini al
-        function getLastNotificationDates() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEYS.lastNotificationDates) || '{}');
-        }
-
-        // Son bildirim tarihlerini kaydet
-        function saveLastNotificationDates(dates) {
-            localStorage.setItem(STORAGE_KEYS.lastNotificationDates, JSON.stringify(dates));
+            localStorage.setItem('debts_data', JSON.stringify(debts));
         }
 
         // Borç listesini yükle
@@ -744,7 +697,7 @@
             document.getElementById('todayPayments').textContent = todayPayments;
         }
 
-        // Bildirim günlüğüne ekle
+        // Log ekle
         function addLog(message) {
             const logContainer = document.getElementById('notificationLog');
             const time = new Date().toLocaleTimeString('tr-TR');
@@ -753,7 +706,6 @@
             logItem.textContent = `[${time}] ${message}`;
             logContainer.insertBefore(logItem, logContainer.firstChild);
             
-            // Maksimum 50 log tut
             if (logContainer.children.length > 50) {
                 logContainer.removeChild(logContainer.lastChild);
             }
