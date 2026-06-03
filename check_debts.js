@@ -3,18 +3,18 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 const DEBTS = [
   {
-    name: "Test deneme",
-    monthlyPayment: 20000,
-    dueDate: "2026-06-04"
-  },
-  {
-    name: "Deneme",
-    monthlyPayment: 1000,
+    name: "Test borç",
+    monthlyPayment: 10000,
     dueDate: "2026-06-05"
   },
   {
-    name: "Borçtest",
-    monthlyPayment: 2145,
+    name: "Test2",
+    monthlyPayment: 2045,
+    dueDate: "2026-06-06"
+  },
+  {
+    name: "Test3",
+    monthlyPayment: 5845,
     dueDate: "2026-06-06"
   }
 ];
