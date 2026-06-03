@@ -1,7 +1,23 @@
-const TELEGRAM_TOKEN = '8498099085:AAEpI-uWC3RH6s_9IiY2_MyJVcImHhi_0FA';
-const TELEGRAM_CHAT_ID = '6931158642';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-const DEBTS = [];
+const DEBTS = [
+  {
+    name: "🚗 Araba Kredisi",
+    monthlyPayment: 4625,
+    dueDate: "2026-06-10"
+  },
+  {
+    name: "💳 Kredi Kartı",
+    monthlyPayment: 2500,
+    dueDate: "2026-06-06"
+  },
+  {
+    name: "🏠 Kira",
+    monthlyPayment: 3000,
+    dueDate: "2026-06-03"
+  }
+];
 
 async function sendTelegramMessage(message) {
     const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
@@ -28,7 +44,7 @@ async function sendTelegramMessage(message) {
 
 async function checkAllDebts() {
     console.log('🔍 Borçlar kontrol ediliyor...');
-    console.log('📅 Tarih:', new Date().toLocaleString('tr-TR'));
+    console.log('📅 Tarih:', new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }));
     
     if (DEBTS.length === 0) {
         console.log('⚠️ Henüz borç eklenmemiş.');
@@ -38,37 +54,70 @@ async function checkAllDebts() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    let notificationSent = false;
+    
     for (const debt of DEBTS) {
         const dueDate = new Date(debt.dueDate);
         dueDate.setHours(0, 0, 0, 0);
         
         const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
         
+        console.log(`📋 ${debt.name}: ${daysUntilDue} gün (Vade: ${debt.dueDate})`);
+        
         let message = '';
         let shouldNotify = false;
         
         if (daysUntilDue === 0) {
-            message = `💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment} TL\n\n🔴 Hemen ödeme yapmayı unutma!`;
+            message = `💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\n\n` +
+                     `Borç: ${debt.name}\n` +
+                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n\n` +
+                     `🔴 Hemen ödeme yapmayı unutma!`;
             shouldNotify = true;
         } else if (daysUntilDue === 1) {
-            message = `🔴 <b>YARIN SON GÜN!</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment} TL\n\n⚠️ Ödemeyi hazırla!`;
+            message = `🔴 <b>YARIN SON GÜN!</b>\n\n` +
+                     `Borç: ${debt.name}\n` +
+                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
+                     `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
+                     `⚠️ Ödemeyi hazırla!`;
             shouldNotify = true;
         } else if (daysUntilDue === 3) {
-            message = `🔶 <b>3 GÜN KALDI</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment} TL\nSon Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n💡 Hazırlık yapmaya başla!`;
+            message = `🔶 <b>3 GÜN KALDI</b>\n\n` +
+                     `Borç: ${debt.name}\n` +
+                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
+                     `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
+                     `💡 Hazırlık yapmaya başla!`;
             shouldNotify = true;
         } else if (daysUntilDue === 7) {
-            message = `⚠️ <b>1 HAFTA KALDI</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment} TL\nSon Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n📅 Bütçeni ayarla.`;
+            message = `⚠️ <b>1 HAFTA KALDI</b>\n\n` +
+                     `Borç: ${debt.name}\n` +
+                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
+                     `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
+                     `📅 Bütçeni ayarla.`;
             shouldNotify = true;
         } else if (daysUntilDue < 0) {
-            message = `❌ <b>GECİKTİN!</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment} TL\nGecikme: ${Math.abs(daysUntilDue)} gün\n\n🚨 Acil ödeme yap!`;
+            message = `❌ <b>GECİKTİN!</b>\n\n` +
+                     `Borç: ${debt.name}\n` +
+                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
+                     `Gecikme: ${Math.abs(daysUntilDue)} gün\n\n` +
+                     `🚨 Acil ödeme yap!`;
             shouldNotify = true;
         }
         
         if (shouldNotify) {
-            console.log(`📤 Bildirim: ${debt.name} (${daysUntilDue} gün)`);
-            await sendTelegramMessage(message);
+            console.log(`📤 Bildirim gönderiliyor: ${debt.name} (${daysUntilDue} gün)`);
+            const success = await sendTelegramMessage(message);
+            if (success) {
+                notificationSent = true;
+                console.log('✅ Gönderildi!');
+            } else {
+                console.log('❌ Gönderilemedi!');
+            }
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
+    }
+    
+    if (!notificationSent) {
+        console.log('✅ Yaklaşan ödeme yok, bildirim gönderilmedi.');
     }
     
     console.log('✅ Kontrol tamamlandı.');
