@@ -3,19 +3,9 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 const DEBTS = [
   {
-    name: "🚗 Araba Kredisi",
-    monthlyPayment: 4625,
-    dueDate: "2026-06-10"
-  },
-  {
-    name: "💳 Kredi Kartı",
-    monthlyPayment: 2500,
-    dueDate: "2026-06-06"
-  },
-  {
-    name: "🏠 Kira",
-    monthlyPayment: 3000,
-    dueDate: "2026-06-03"
+    name: "Deneme borç",
+    monthlyPayment: 1010,
+    dueDate: "2026-06-04"
   }
 ];
 
@@ -68,38 +58,19 @@ async function checkAllDebts() {
         let shouldNotify = false;
         
         if (daysUntilDue === 0) {
-            message = `💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\n\n` +
-                     `Borç: ${debt.name}\n` +
-                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n\n` +
-                     `🔴 Hemen ödeme yapmayı unutma!`;
+            message = `💰 <b>BUGÜN ÖDEME GÜNÜ!</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n\n🔴 Hemen ödeme yapmayı unutma!`;
             shouldNotify = true;
         } else if (daysUntilDue === 1) {
-            message = `🔴 <b>YARIN SON GÜN!</b>\n\n` +
-                     `Borç: ${debt.name}\n` +
-                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                     `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
-                     `⚠️ Ödemeyi hazırla!`;
+            message = `🔴 <b>YARIN SON GÜN!</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\nSon Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n⚠️ Ödemeyi hazırla!`;
             shouldNotify = true;
         } else if (daysUntilDue === 3) {
-            message = `🔶 <b>3 GÜN KALDI</b>\n\n` +
-                     `Borç: ${debt.name}\n` +
-                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                     `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
-                     `💡 Hazırlık yapmaya başla!`;
+            message = `🔶 <b>3 GÜN KALDI</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\nSon Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n💡 Hazırlık yapmaya başla!`;
             shouldNotify = true;
         } else if (daysUntilDue === 7) {
-            message = `⚠️ <b>1 HAFTA KALDI</b>\n\n` +
-                     `Borç: ${debt.name}\n` +
-                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                     `Son Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n` +
-                     `📅 Bütçeni ayarla.`;
+            message = `⚠️ <b>1 HAFTA KALDI</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\nSon Ödeme: ${dueDate.toLocaleDateString('tr-TR')}\n\n📅 Bütçeni ayarla.`;
             shouldNotify = true;
         } else if (daysUntilDue < 0) {
-            message = `❌ <b>GECİKTİN!</b>\n\n` +
-                     `Borç: ${debt.name}\n` +
-                     `Tutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\n` +
-                     `Gecikme: ${Math.abs(daysUntilDue)} gün\n\n` +
-                     `🚨 Acil ödeme yap!`;
+            message = `❌ <b>GECİKTİN!</b>\n\nBorç: ${debt.name}\nTutar: ${debt.monthlyPayment.toLocaleString('tr-TR')} TL\nGecikme: ${Math.abs(daysUntilDue)} gün\n\n🚨 Acil ödeme yap!`;
             shouldNotify = true;
         }
         
